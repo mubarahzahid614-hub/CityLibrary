@@ -1,0 +1,3 @@
+[2026-10-05 11:42:44] Application started
+[2026-10-05 11:44:00] Added Book #1: clean code
+[2026-10-05 11:44:54] FAILED Issue (Book#1, Member#1): Member with ID 1 was not found.
