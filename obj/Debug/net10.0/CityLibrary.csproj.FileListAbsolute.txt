@@ -12,3 +12,4 @@ D:\CityLibrary\obj\Debug\net10.0\refint\CityLibrary.dll
 D:\CityLibrary\obj\Debug\net10.0\CityLibrary.pdb
 D:\CityLibrary\obj\Debug\net10.0\CityLibrary.genruntimeconfig.cache
 D:\CityLibrary\obj\Debug\net10.0\ref\CityLibrary.dll
+D:\CityLibrary\obj\Debug\net10.0\CityLibrary.sourcelink.json
