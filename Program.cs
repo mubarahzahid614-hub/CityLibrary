@@ -9,19 +9,19 @@ public class Program
 
     public static void Main()
     {
-        Console.OutputEncoding = Encoding.UTF8; // ✅ ⚠️ jaise symbols sahi dikhane ke liye
-        Console.WriteLine(library.Librarian.DisplayInfo()); // Librarian ka DisplayInfo (polymorphism)
+        Console.OutputEncoding = Encoding.UTF8; 
+        Console.WriteLine(library.Librarian.DisplayInfo()); 
         library.Log("Application started");
 
         bool running = true;
 
-        // CONCEPT 13: Loops & Conditions -> menu tab tak chalta hai jab tak user 0 na dabaye
+        
         while (running)
         {
             ShowMenu();
             int choice = ReadInt("Enter choice: ");
 
-            // CONCEPT 10: try-catch-finally har operation ke liye
+
             try
             {
                 switch (choice)
@@ -41,34 +41,34 @@ public class Program
                         Console.WriteLine("Goodbye! (Unsaved data save nahi hua, agar zaroorat ho to pehle option 9 use karein.)");
                         break;
                     default:
-                        Console.WriteLine("⚠️  Invalid choice. Please select from the menu.");
+                        Console.WriteLine("Invalid choice. Please select from the menu.");
                         break;
                 }
             }
-            catch (LibraryException ex)   // hamari custom exceptions (BookNotFound, InvalidInput, ...)
+            catch (LibraryException ex)   
             {
-                Console.WriteLine($"⚠️  {ex.Message}");
+                Console.WriteLine($" {ex.Message}");
             }
-            catch (IOException ex)        // file read/write ke masle
+            catch (IOException ex)
             {
-                Console.WriteLine($"❌ File error: {ex.Message}");
+                Console.WriteLine($" File error: {ex.Message}");
                 library.Log($"File error: {ex.Message}");
             }
-            catch (Exception ex)          // koi unexpected error: crash nahi, message dikhao
+            catch (Exception ex)          
             {
-                Console.WriteLine($"❌ Unexpected error: {ex.Message}");
+                Console.WriteLine($" Unexpected error: {ex.Message}");
                 library.Log($"Unexpected error: {ex.Message}");
             }
             finally
             {
-                Console.WriteLine(); // chahe success ho ya error, har operation ke baad khali line
+                Console.WriteLine(); 
             }
         }
 
         library.Log("Application closed");
     }
 
-    // ---------------------------------------------------------------- MENU
+    
 
     private static void ShowMenu()
     {
@@ -87,7 +87,7 @@ public class Program
         Console.WriteLine("=============================");
     }
 
-    // ------------------------------------------------------------- ACTIONS
+    
 
     private static void AddBook()
     {
@@ -96,7 +96,7 @@ public class Program
         decimal price = ReadDecimal("Price: ");
 
         var book = library.AddBook(title, author, price);
-        Console.WriteLine($"✅ Book added with ID {book.BookId}");
+        Console.WriteLine($"Book added with ID {book.BookId}");
     }
 
     private static void ViewAllBooks()
@@ -118,17 +118,17 @@ public class Program
         if (mode == 1)
         {
             int id = ReadInt("Book ID: ");
-            Console.WriteLine(library.SearchBook(id));            // SearchBook(int)
+            Console.WriteLine(library.SearchBook(id));            
         }
         else if (mode == 2)
         {
             string title = ReadText("Title (or part of it): ");
-            foreach (var book in library.SearchBook(title))       // SearchBook(string)
+            foreach (var book in library.SearchBook(title))       
                 Console.WriteLine(book);
         }
         else
         {
-            Console.WriteLine("⚠️  Invalid search option.");
+            Console.WriteLine("Invalid search option.");
         }
     }
 
@@ -138,13 +138,12 @@ public class Program
         string phone = ReadText("Phone: ");
 
         var member = library.AddMember(name, phone);
-        Console.WriteLine($"✅ Member added with ID {member.Id}");
+        Console.WriteLine($"Member added with ID {member.Id}");
     }
 
     private static void ViewAllMembers()
     {
-        // CONCEPT 4: Polymorphism -> List<Person> me Librarian + Members dono hain.
-        // Har object par DisplayInfo() call hota hai, aur har class apna version chalati hai.
+        
         var people = new List<Person>();
         people.Add(library.Librarian);
         people.AddRange(library.Members);
@@ -165,7 +164,7 @@ public class Program
 
         var book = library.SearchBook(bookId);
         var member = library.FindMember(memberId);
-        Console.WriteLine($"✅ Book '{book.Title}' issued to {member.Name}.");
+        Console.WriteLine($"Book '{book.Title}' issued to {member.Name}.");
     }
 
     private static void ReturnBook()
@@ -175,7 +174,7 @@ public class Program
         library.ReturnBook(bookId);
 
         var book = library.SearchBook(bookId);
-        Console.WriteLine($"✅ Book '{book.Title}' returned. It is available again.");
+        Console.WriteLine($"Book '{book.Title}' returned. It is available again.");
     }
 
     private static void ViewIssuedBooks()
@@ -193,7 +192,7 @@ public class Program
     private static void SaveData()
     {
         library.SaveData();
-        Console.WriteLine("✅ Data saved to books.txt, members.txt and issues.txt");
+        Console.WriteLine("Data saved to books.txt, members.txt and issues.txt");
     }
 
     private static void LoadData()
@@ -201,17 +200,15 @@ public class Program
         var result = library.LoadData();
         if (!result.FilesFound)
         {
-            Console.WriteLine("⚠️  No saved data files found. Pehle Save Data (9) karein.");
+            Console.WriteLine(" No saved data files found. Pehle Save Data (9) karein.");
             return;
         }
-        Console.WriteLine($"✅ Loaded {result.Books} book(s), {result.Members} member(s), {result.Records} record(s).");
+        Console.WriteLine($" Loaded {result.Books} book(s), {result.Members} member(s), {result.Records} record(s).");
         if (result.Skipped > 0)
-            Console.WriteLine($"⚠️  {result.Skipped} corrupted line(s) skipped.");
+            Console.WriteLine($"  {result.Skipped} corrupted line(s) skipped.");
     }
 
-    // ------------------------------------------------------- INPUT HELPERS
-
-    // Console.ReadLine() null deta hai jab input khatam ho jaye (Ctrl+Z / piped input)
+    
     private static string ReadRaw(string prompt)
     {
         Console.Write(prompt);
@@ -225,10 +222,10 @@ public class Program
         return input;
     }
 
-    // Text: jaisa user likhe waisa wapas (empty ka faisla Library/setter karta hai -> InvalidInputException)
+    
     private static string ReadText(string prompt) => ReadRaw(prompt);
 
-    // Number prompt: "abc" likhne par dobara poochta hai, crash nahi hota (Test 17)
+    
     private static int ReadInt(string prompt)
     {
         while (true)
@@ -236,7 +233,7 @@ public class Program
             string input = ReadRaw(prompt);
             if (int.TryParse(input.Trim(), out int value))
                 return value;
-            Console.WriteLine("⚠️  Please enter a valid whole number.");
+            Console.WriteLine("Please enter a valid whole number.");
         }
     }
 
@@ -246,8 +243,8 @@ public class Program
         {
             string input = ReadRaw(prompt);
             if (decimal.TryParse(input.Trim(), NumberStyles.Number, CultureInfo.InvariantCulture, out decimal value))
-                return value; // 0 ya negative bhi return hoga; "price > 0" ka rule Book.Price setter check karta hai
-            Console.WriteLine("⚠️  Please enter a valid number.");
+                return value; 
+            Console.WriteLine("Please enter a valid number.");
         }
     }
 }

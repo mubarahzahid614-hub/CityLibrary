@@ -2,7 +2,7 @@ namespace CityLibrary;
 
 public class IssueRecord
 {
-    // CONCEPT 8: Static member
+   
     private static int _nextRecordId = 1;
 
     public int RecordId { get; private set; }
@@ -10,10 +10,10 @@ public class IssueRecord
     public int MemberId { get; private set; }
     public DateTime IssueDate { get; private set; }
 
-    // DateTime? = nullable. Jab tak book return nahi hui, ye null rahega.
+
     public DateTime? ReturnDate { get; set; }
 
-    // Naya issue: ID automatic, IssueDate = abhi ka time
+   
     public IssueRecord(int bookId, int memberId)
     {
         RecordId = _nextRecordId++;
@@ -23,7 +23,7 @@ public class IssueRecord
         ReturnDate = null;
     }
 
-    // File se load karne ke liye
+    
     public IssueRecord(int recordId, int bookId, int memberId, DateTime issueDate, DateTime? returnDate)
     {
         if (recordId <= 0 || bookId <= 0 || memberId <= 0)

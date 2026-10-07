@@ -2,10 +2,10 @@ using System.Globalization;
 
 namespace CityLibrary;
 
-// Result of Load: kitni lines load hui aur kitni corrupted thi (skip hui)
+
 public record LoadResult(bool FilesFound, int Books, int Members, int Records, int Skipped);
 
-// Library = poore system ka "manager". Saari rules (business rules) yahin enforce hoti hain.
+
 public class Library
 {
     private const string BooksFile = "books.txt";
@@ -13,7 +13,7 @@ public class Library
     private const string IssuesFile = "issues.txt";
     private const string LogFile = "library.log";
 
-    // CONCEPT 12: Collections -> List<T>
+    
     private readonly List<Book> _books = new();
     private readonly List<Member> _members = new();
     private readonly List<IssueRecord> _records = new();
@@ -23,8 +23,7 @@ public class Library
     public IReadOnlyList<Book> Books => _books;
     public IReadOnlyList<Member> Members => _members;
 
-    // ---------------------------------------------------------------- BOOKS
-
+   
     public Book AddBook(string title, string author, decimal price)
     {
         try
@@ -33,8 +32,7 @@ public class Library
             if (_books.Any(b => b.BookId == id))   // Rule: Book ID must be unique
                 throw new InvalidInputException($"Book ID {id} already exists.");
 
-            // Book(id, title, author, price) -> setters validation chalate hain.
-            // Agar yahan exception aayi to counter aage NAHI barhta (isliye ID skip nahi hoti).
+            
             var book = new Book(id, title, author, price);
             _books.Add(book);
             Log($"Added Book #{book.BookId}: {book.Title}");
@@ -43,13 +41,11 @@ public class Library
         catch (LibraryException ex)
         {
             Log($"FAILED Add Book: {ex.Message}");
-            throw; // upar Program tak pohnchao taake user ko message dikhe
+            throw; 
         }
     }
 
-    // CONCEPT 7: Method Overloading -> same naam, alag parameters
-
-    // Version 1: ID se search
+    
     public Book SearchBook(int id)
     {
         var book = _books.FirstOrDefault(b => b.BookId == id);
@@ -61,7 +57,7 @@ public class Library
         return book;
     }
 
-    // Version 2: title se (partial match, case-insensitive)
+    
     public List<Book> SearchBook(string title)
     {
         if (string.IsNullOrWhiteSpace(title))
@@ -79,7 +75,7 @@ public class Library
         return results;
     }
 
-    // -------------------------------------------------------------- MEMBERS
+
 
     public Member AddMember(string name, string phone)
     {
@@ -105,16 +101,16 @@ public class Library
         return member;
     }
 
-    // ---------------------------------------------------------- ISSUE/RETURN
+
 
     public IssueRecord IssueBook(int bookId, int memberId)
     {
         try
         {
-            var book = SearchBook(bookId);       // BookNotFoundException agar nahi mili
-            var member = FindMember(memberId);   // MemberNotFoundException agar nahi mila
+            var book = SearchBook(bookId);       
+            var member = FindMember(memberId);   
 
-            if (book.IsIssued)                   // Rule: already issued book dobara issue nahi ho sakti
+            if (book.IsIssued)                   
                 throw new BookNotAvailableException($"Book '{book.Title}' is already issued.");
 
             var record = new IssueRecord(bookId, memberId);
@@ -137,7 +133,7 @@ public class Library
         {
             var book = SearchBook(bookId);
 
-            if (!book.IsIssued)                  // Rule: jo issue hi nahi hui wo return nahi ho sakti
+            if (!book.IsIssued)                  
                 throw new BookNotAvailableException($"Book '{book.Title}' was not issued, so it cannot be returned.");
 
             var record = _records.LastOrDefault(r => r.BookId == bookId && r.IsActive);
@@ -159,7 +155,7 @@ public class Library
 
     public List<IssueRecord> GetActiveIssues() => _records.Where(r => r.IsActive).ToList();
 
-    // Ek issue record ko readable line me convert karta hai
+    
     public string DescribeIssue(IssueRecord r)
     {
         string title = _books.FirstOrDefault(b => b.BookId == r.BookId)?.Title ?? "(unknown book)";
@@ -167,9 +163,7 @@ public class Library
         return $"Record #{r.RecordId} | Book#{r.BookId} '{title}' | Member#{r.MemberId} {member} | Issued: {r.IssueDate:yyyy-MM-dd HH:mm}";
     }
 
-    // ------------------------------------------------------------ FILE SAVE
-
-    // CONCEPT 11: File Handling (StreamWriter) + CONCEPT 10: try/catch/finally
+    
     public void SaveData()
     {
         try
@@ -204,7 +198,7 @@ public class Library
         }
         finally
         {
-            // finally hamesha chalta hai (error aaye ya na aaye) -> file hamesha band hogi
+
             writer?.Dispose();
         }
     }
@@ -212,9 +206,7 @@ public class Library
     // '|' text me aa jaye to file format kharab ho jata hai, isliye '/' se replace
     private static string Clean(string text) => text.Replace("|", "/");
 
-    // ------------------------------------------------------------ FILE LOAD
-
-    // CONCEPT 11: File Handling (StreamReader)
+   
     public LoadResult LoadData()
     {
         if (!File.Exists(BooksFile) && !File.Exists(MembersFile) && !File.Exists(IssuesFile))
@@ -223,7 +215,7 @@ public class Library
             return new LoadResult(false, 0, 0, 0, 0);
         }
 
-        // Purana data saaf + counters reset, phir file se dobara bharo
+       
         _books.Clear();
         _members.Clear();
         _records.Clear();
@@ -233,7 +225,6 @@ public class Library
 
         int skipped = 0;
 
-        // ---- books ----
         foreach (var line in ReadLines(BooksFile))
         {
             try
@@ -252,11 +243,11 @@ public class Library
             }
             catch (InvalidInputException)
             {
-                skipped++; // corrupted line -> skip, crash nahi
+                skipped++; 
             }
         }
 
-        // ---- members ----
+       
         foreach (var line in ReadLines(MembersFile))
         {
             try
@@ -296,7 +287,7 @@ public class Library
                     returnDate = rd;
                 }
 
-                // Record tabhi valid hai jab uski book aur member maujood hon
+               
                 if (!_books.Any(b => b.BookId == bookId) || !_members.Any(m => m.Id == memberId))
                     throw new InvalidInputException("Record refers to a missing book or member.");
                 if (_records.Any(r => r.RecordId == recordId))
@@ -337,9 +328,7 @@ public class Library
         return lines;
     }
 
-    // -------------------------------------------------------------- LOGGING
-
-    // Har operation library.log me append hota hai
+   
     public void Log(string message)
     {
         try
@@ -348,7 +337,7 @@ public class Library
         }
         catch (IOException)
         {
-            // Log likhne me masla aaye to program band nahi hona chahiye
+           
         }
     }
 }
