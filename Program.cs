@@ -95,7 +95,7 @@ public class Program
         decimal price = ReadDecimal("Price: ");
 
         var book = library.AddBook(title, author, price);
-        Console.WriteLine($"✅ Book added with ID {book.BookId}");
+        Console.WriteLine($" Book added with ID {book.BookId}");
     }
 
     private static void ViewAllBooks()
@@ -137,7 +137,7 @@ public class Program
         string phone = ReadText("Phone: ");
 
         var member = library.AddMember(name, phone);
-        Console.WriteLine($"✅ Member added with ID {member.Id}");
+        Console.WriteLine($"Member added with ID {member.Id}");
     }
 
     private static void ViewAllMembers()
